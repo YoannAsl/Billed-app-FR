@@ -8,8 +8,7 @@ export default (height) => {
 	if (typeof user === 'string') {
 		user = JSON.parse(user);
 	}
-	// if (user && user.type === 'Employee')
-	{
+	if (user && user.type === 'Employee') {
 		return `
         <div class='vertical-navbar' style='height: ${height}vh;'>
           <div class='layout-title'> Billed </div>
@@ -24,15 +23,14 @@ export default (height) => {
           </div>
       </div>
         `;
+	} else {
+		return `
+	      <div class='vertical-navbar' style='height: ${height}vh;'>
+	        <div class='layout-title'> Billed </div>
+	          <div id='layout-disconnect' data-testid='layout-disconnect'>
+	            ${DisconnectIcon}
+	          </div>
+	        </div>
+	      `;
 	}
-	//  else {
-	// 	return `
-	//       <div class='vertical-navbar' style='height: ${height}vh;'>
-	//         <div class='layout-title'> Billed </div>
-	//           <div id='layout-disconnect' data-testid='layout-disconnect'>
-	//             ${DisconnectIcon}
-	//           </div>
-	//         </div>
-	//       `;
-	// }
 };
