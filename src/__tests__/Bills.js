@@ -13,21 +13,6 @@ describe('Given I am connected as an employee', () => {
 			const html = BillsUI({ data: [] });
 			document.body.innerHTML = html;
 			//to-do write expect expression
-
-			// console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-
-			// Object.defineProperty(window, 'localStorage', {
-			// 	value: localStorageMock,
-			// });
-
-			// window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
-			// const html = BillsUI({ data: [] });
-
-			// const pathname = ROUTES_PATH['Bills'];
-			// document.body.innerHTML = html;
-
-			// const billIcon = screen.getByTestId('icon-window');
-			// expect(billIcon).toHaveClass('active-icon');
 		});
 		test('Then bills should be ordered from earliest to latest', () => {
 			const html = BillsUI({ data: bills });
@@ -58,6 +43,15 @@ describe('Given I am connected as an employee', () => {
 			const message = await screen.getByText(/Erreur 404/);
 			expect(message).toBeTruthy();
 		});
+		// test('fetches messages from an API and fails with 500 message error', async () => {
+		// 	firebase.get.mockImplementationOnce(() =>
+		// 		Promise.reject(new Error('Erreur 500'))
+		// 	);
+		// 	const html = DashboardUI({ error: 'Erreur 500' });
+		// 	document.body.innerHTML = html;
+		// 	const message = await screen.getByText(/Erreur 500/);
+		// 	expect(message).toBeTruthy();
+		// });
 		test('Then, Loading page should be rendered', () => {
 			const html = BillsUI({ loading: true });
 			document.body.innerHTML = html;
@@ -129,9 +123,6 @@ describe('Given I am connected as an employee', () => {
 			button.addEventListener('click', handleClickIconEye);
 			fireEvent.click(button);
 			expect(handleClickIconEye).toHaveBeenCalled();
-
-			// const modalFade = screen.getByTestId('modal-fade');
-			// expect(modalFade).toHaveClass('show');
 		});
 	});
 });

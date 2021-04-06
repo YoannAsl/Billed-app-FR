@@ -22,22 +22,22 @@ export default class NewBill {
 			.files[0];
 		const filePath = e.target.value.split(/\\/g);
 		const fileName = filePath[filePath.length - 1];
-		// if (
-		// 	fileName.slice(-4).includes('.png') ||
-		// 	fileName.slice(-4).includes('.jpg') ||
-		// 	fileName.slice(-5).includes('.jpeg')
-		// ) {
-		this.firestore.storage
-			.ref(`justificatifs/${fileName}`)
-			.put(file)
-			.then((snapshot) => snapshot.ref.getDownloadURL())
-			.then((url) => {
-				this.fileUrl = url;
-				this.fileName = fileName;
-			});
-		// } else {
-		// 	e.target.value = '';
-		// }
+		if (
+			fileName.slice(-4).includes('.png') ||
+			fileName.slice(-4).includes('.jpg') ||
+			fileName.slice(-5).includes('.jpeg')
+		) {
+			this.firestore.storage
+				.ref(`justificatifs/${fileName}`)
+				.put(file)
+				.then((snapshot) => snapshot.ref.getDownloadURL())
+				.then((url) => {
+					this.fileUrl = url;
+					this.fileName = fileName;
+				});
+		} else {
+			e.target.value = '';
+		}
 	};
 
 	handleSubmit = (e) => {
@@ -66,6 +66,7 @@ export default class NewBill {
 	};
 
 	// not need to cover this function by tests
+	/* istanbul ignore next */
 	createBill = (bill) => {
 		if (this.firestore) {
 			this.firestore
