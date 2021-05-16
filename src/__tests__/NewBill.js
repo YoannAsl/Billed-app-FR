@@ -3,12 +3,13 @@ import NewBillUI from '../views/NewBillUI.js';
 import NewBill from '../containers/NewBill.js';
 import '@testing-library/jest-dom';
 import { localStorageMock } from '../__mocks__/localStorage';
+import BillsUI from '../views/BillsUI.js';
 import { ROUTES } from '../constants/routes';
 import firebase from '../__mocks__/firebase';
 
 describe('Given I am connected as an employee', () => {
-	describe('When I am on NewBill Page and adding a file', () => {
-		test("Then the file's extention should be .png, .jpg or .jpeg", () => {
+	describe('When I am on NewBill Page and I add an image (jpg, jpeg or png)', () => {
+		test('Then the file input should change', () => {
 			const html = NewBillUI();
 			document.body.innerHTML = html;
 
@@ -66,8 +67,29 @@ describe('Given I am connected as an employee', () => {
 			};
 
 			const bills = await firebase.post(newBill);
+
 			expect(postSpy).toHaveBeenCalledTimes(1);
 			expect(bills.data.length).toBe(5);
+		});
+		test('Then it adds bill to the API and fails with 404 message error', async () => {
+			firebase.post.mockImplementationOnce(() =>
+				Promise.reject(new Error('Erreur 404'))
+			);
+			const html = BillsUI({ error: 'Erreur 404' });
+			document.body.innerHTML = html;
+			const message = await screen.getByText(/Erreur 404/);
+
+			expect(message).toBeTruthy();
+		});
+		test('Then it adds bill to the API and fails with 500 message error', async () => {
+			firebase.post.mockImplementationOnce(() =>
+				Promise.reject(new Error('Erreur 500'))
+			);
+			const html = BillsUI({ error: 'Erreur 500' });
+			document.body.innerHTML = html;
+			const message = await screen.getByText(/Erreur 500/);
+
+			expect(message).toBeTruthy();
 		});
 	});
 });
