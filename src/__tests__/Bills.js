@@ -9,11 +9,6 @@ import firebase from '../__mocks__/firebase';
 
 describe('Given I am connected as an employee', () => {
 	describe('When I am on Bills Page', () => {
-		test('Then bill icon in vertical layout should be highlighted', () => {
-			const html = BillsUI({ data: [] });
-			document.body.innerHTML = html;
-			//to-do write expect expression
-		});
 		test('Then bills should be ordered from earliest to latest', () => {
 			const html = BillsUI({ data: bills });
 			document.body.innerHTML = html;
@@ -24,6 +19,7 @@ describe('Given I am connected as an employee', () => {
 				.map((a) => a.innerHTML);
 			const antiChrono = (a, b) => (a < b ? 1 : -1);
 			const datesSorted = [...dates].sort(antiChrono);
+
 			expect(dates).toEqual(datesSorted);
 		});
 
@@ -31,6 +27,7 @@ describe('Given I am connected as an employee', () => {
 		test('Then it should fetch bills from mock API GET', async () => {
 			const getSpy = jest.spyOn(firebase, 'get');
 			const bills = await firebase.get();
+
 			expect(getSpy).toHaveBeenCalledTimes(1);
 			expect(bills.data.length).toBe(4);
 		});
@@ -41,34 +38,30 @@ describe('Given I am connected as an employee', () => {
 			const html = BillsUI({ error: 'Erreur 404' });
 			document.body.innerHTML = html;
 			const message = await screen.getByText(/Erreur 404/);
+
 			expect(message).toBeTruthy();
 		});
-		// test('fetches messages from an API and fails with 500 message error', async () => {
-		// 	firebase.get.mockImplementationOnce(() =>
-		// 		Promise.reject(new Error('Erreur 500'))
-		// 	);
-		// 	const html = DashboardUI({ error: 'Erreur 500' });
-		// 	document.body.innerHTML = html;
-		// 	const message = await screen.getByText(/Erreur 500/);
-		// 	expect(message).toBeTruthy();
-		// });
-		test('Then, Loading page should be rendered', () => {
-			const html = BillsUI({ loading: true });
+		test('Then it fetches messages from an API and fails with 500 message error', async () => {
+			firebase.get.mockImplementationOnce(() =>
+				Promise.reject(new Error('Erreur 500'))
+			);
+			const html = BillsUI({ error: 'Erreur 500' });
 			document.body.innerHTML = html;
-			expect(screen.getAllByText('Loading...')).toBeTruthy();
-		});
-		test('Then, Error page should be rendered', () => {
-			const html = BillsUI({ error: 'some error message' });
-			document.body.innerHTML = html;
-			expect(screen.getAllByText('Erreur')).toBeTruthy();
+			const message = await screen.getByText(/Erreur 500/);
+
+			expect(message).toBeTruthy();
 		});
 	});
+
 	describe('When I click on the Create a new bill button', () => {
 		test('Then I should be sent to the NewBill page', () => {
 			Object.defineProperty(window, 'localStorage', {
 				value: localStorageMock,
 			});
-			window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
+			window.localStorage.setItem(
+				'user',
+				JSON.stringify({ type: 'Employee' })
+			);
 
 			const html = BillsUI({ data: [] });
 			document.body.innerHTML = html;
@@ -85,21 +78,29 @@ describe('Given I am connected as an employee', () => {
 			});
 
 			const button = screen.getByTestId('btn-new-bill');
-			const handleClickNewBill = jest.fn((e) => bills.handleClickNewBill(e));
+			const handleClickNewBill = jest.fn((e) =>
+				bills.handleClickNewBill(e)
+			);
+
 			button.addEventListener('click', handleClickNewBill);
 			fireEvent.click(button);
-			expect(handleClickNewBill).toHaveBeenCalled();
 
-			const newBillForm = screen.getByTestId('form-new-bill');
-			expect(newBillForm).toBeTruthy();
+			expect(
+				screen.getAllByText('Envoyer une note de frais')
+			).toBeTruthy();
 		});
 	});
+
 	describe('When I click on the Eye Icon button', () => {
-		test('Then a modal should open', async () => {
+		test('Then a modal should open', () => {
 			Object.defineProperty(window, 'localStorage', {
 				value: localStorageMock,
 			});
-			window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
+			window.localStorage.setItem(
+				'user',
+				JSON.stringify({ type: 'Employee' })
+			);
+
 			const html = BillsUI({ data: bills });
 			document.body.innerHTML = html;
 
@@ -122,7 +123,8 @@ describe('Given I am connected as an employee', () => {
 			});
 			button.addEventListener('click', handleClickIconEye);
 			fireEvent.click(button);
-			expect(handleClickIconEye).toHaveBeenCalled();
+
+			expect(document.getElementById('modaleFile')).toBeTruthy();
 		});
 	});
 });
