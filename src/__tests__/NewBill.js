@@ -44,6 +44,40 @@ describe('Given I am connected as an employee', () => {
 			expect(fileInput.files[0].name).toBe('test.png');
 		});
 	});
+	describe('When I am on NewBill Page and I submit the form with an image', () => {
+		test('Then it should create a new bill', () => {
+			Object.defineProperty(window, 'localStorage', {
+				value: localStorageMock,
+			});
+			window.localStorage.setItem(
+				'user',
+				JSON.stringify({
+					type: 'Employee',
+				})
+			);
+
+			const onNavigate = (pathname) => {
+				document.body.innerHTML = ROUTES({ pathname });
+			};
+
+			const html = NewBillUI();
+			document.body.innerHTML = html;
+
+			const newBill = new NewBill({
+				document,
+				onNavigate,
+				firestore: null,
+				localStorage: window.localStorage,
+			});
+
+			const handleSubmit = jest.fn(newBill.handleSubmit);
+			const button = screen.getByTestId('form-new-bill');
+			button.addEventListener('submit', handleSubmit);
+			fireEvent.submit(button);
+
+			expect(handleSubmit).toHaveBeenCalled();
+		});
+	});
 
 	// Test d'integration POST
 	describe('When I am on NewBill Page and submit the form', () => {
