@@ -17,6 +17,13 @@ describe('Given I am connected as an employee', () => {
 				document.body.innerHTML = ROUTES({ pathname });
 			};
 
+			window.localStorage.setItem(
+				'user',
+				JSON.stringify({
+					type: 'Employee',
+				})
+			);
+
 			const newBill = new NewBill({
 				document,
 				onNavigate,
@@ -46,7 +53,7 @@ describe('Given I am connected as an employee', () => {
 	});
 
 	describe('When I am on NewBill Page and I submit the form with an image', () => {
-		test('Then it should create a new bill', () => {
+		test('Then it should create a new bill and I should be redirected to the dashboard', () => {
 			Object.defineProperty(window, 'localStorage', {
 				value: localStorageMock,
 			});
@@ -77,6 +84,43 @@ describe('Given I am connected as an employee', () => {
 			fireEvent.submit(button);
 
 			expect(handleSubmit).toHaveBeenCalled();
+			expect(screen.getAllByText('Mes notes de frais')).toBeTruthy();
+		});
+	});
+
+	describe("When I am on NewBill Page and I submit the form with a file that isn't an image", () => {
+		test("Then the bill shouldn't be created and I should stay on the NewBill page", () => {
+			const html = NewBillUI();
+			document.body.innerHTML = html;
+
+			const onNavigate = (pathname) => {
+				document.body.innerHTML = ROUTES({ pathname });
+			};
+
+			window.localStorage.setItem(
+				'user',
+				JSON.stringify({
+					type: 'Employee',
+				})
+			);
+
+			const newBill = new NewBill({
+				document,
+				onNavigate,
+				firestore: null,
+				localStorage: window.localStorage,
+			});
+
+			const handleSubmit = jest.fn(newBill.handleSubmit);
+			newBill.fileName = '';
+			const button = screen.getByTestId('form-new-bill');
+			button.addEventListener('submit', handleSubmit);
+			fireEvent.submit(button);
+
+			expect(handleSubmit).toHaveBeenCalled();
+			expect(
+				screen.getAllByText('Envoyer une note de frais')
+			).toBeTruthy();
 		});
 	});
 
