@@ -44,6 +44,7 @@ describe('Given I am connected as an employee', () => {
 			expect(fileInput.files[0].name).toBe('test.png');
 		});
 	});
+
 	describe('When I am on NewBill Page and I submit the form with an image', () => {
 		test('Then it should create a new bill', () => {
 			Object.defineProperty(window, 'localStorage', {
